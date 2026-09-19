@@ -1,0 +1,131 @@
+{
+  "model_name": "random_forest",
+  "model_version": "v1.0.0",
+  "training_date": "2026-09-19T13:30:17.021824+00:00",
+  "train_records": 101,
+  "test_records": 18,
+  "features_used": [
+    "temperature_c",
+    "humidity_pct",
+    "pressure_hpa",
+    "wind_speed_ms",
+    "cloud_cover_pct",
+    "precipitation_mm_lag_1h",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "season"
+  ],
+  "optimal_threshold": 0.39,
+  "metrics": {
+    "accuracy": 0.4444,
+    "precision": 0.5,
+    "recall": 0.7,
+    "f1": 0.5833,
+    "roc_auc": 0.5375,
+    "threshold": 0.39,
+    "confusion_matrix": [
+      [
+        1,
+        7
+      ],
+      [
+        3,
+        7
+      ]
+    ],
+    "optimal_threshold": 0.39
+  },
+  "candidate_evaluations": {
+    "majority_baseline": {
+      "accuracy": 0.5556,
+      "precision": 0.5556,
+      "recall": 1.0,
+      "f1": 0.7143,
+      "roc_auc": 0.5,
+      "threshold": 0.1,
+      "confusion_matrix": [
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          10
+        ]
+      ],
+      "optimal_threshold": 0.1
+    },
+    "logistic_regression": {
+      "accuracy": 0.4444,
+      "precision": 0.5,
+      "recall": 0.4,
+      "f1": 0.4444,
+      "roc_auc": 0.4125,
+      "threshold": 0.56,
+      "confusion_matrix": [
+        [
+          4,
+          4
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "optimal_threshold": 0.56
+    },
+    "random_forest": {
+      "accuracy": 0.4444,
+      "precision": 0.5,
+      "recall": 0.7,
+      "f1": 0.5833,
+      "roc_auc": 0.5375,
+      "threshold": 0.39,
+      "confusion_matrix": [
+        [
+          1,
+          7
+        ],
+        [
+          3,
+          7
+        ]
+      ],
+      "optimal_threshold": 0.39
+    },
+    "hist_gradient_boosting": {
+      "accuracy": 0.4444,
+      "precision": 0.5,
+      "recall": 0.7,
+      "f1": 0.5833,
+      "roc_auc": 0.425,
+      "threshold": 0.34,
+      "confusion_matrix": [
+        [
+          1,
+          7
+        ],
+        [
+          3,
+          7
+        ]
+      ],
+      "optimal_threshold": 0.34
+    }
+  },
+  "feature_importance": {
+    "humidity_pct": 0.1851,
+    "temperature_c": 0.1785,
+    "cloud_cover_pct": 0.1569,
+    "wind_speed_ms": 0.1503,
+    "pressure_hpa": 0.1242,
+    "hour_cos": 0.0877,
+    "hour_sin": 0.0792,
+    "precipitation_mm_lag_1h": 0.0382,
+    "month_sin": 0.0,
+    "month_cos": 0.0,
+    "season": 0.0
+  }
+}

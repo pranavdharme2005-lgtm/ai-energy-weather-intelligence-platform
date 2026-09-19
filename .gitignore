@@ -1,0 +1,56 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+ENV/
+env/
+
+# Secrets & Local Environment Configs
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# IDE / OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Databases & Cache
+*.sqlite3
+*.db
+
+# Pre-trained ML Models (Included for Out-of-the-Box Inference)
+!saved_models/*.joblib
+!saved_models/*.json
