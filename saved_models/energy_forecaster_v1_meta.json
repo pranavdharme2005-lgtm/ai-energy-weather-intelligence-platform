@@ -1,7 +1,7 @@
 {
   "model_name": "random_forest",
   "model_version": "v1.0.0",
-  "training_date": "2026-09-19T15:28:03.031285+00:00",
+  "training_date": "2026-09-19T15:40:59.042534+00:00",
   "data_frequency": "hourly (1h)",
   "forecast_horizon": "24h",
   "train_records": 122,
@@ -38,107 +38,107 @@
     "precipitation_mm",
     "rain_probability"
   ],
-  "margin_95": 22.47,
+  "margin_95": 30.68,
   "selected_eval": {
     "val": {
-      "mae": 23.66,
-      "rmse": 29.52,
-      "smape": 0.87
+      "mae": 34.69,
+      "rmse": 41.27,
+      "smape": 1.24
     },
     "test": {
-      "mae": 25.34,
-      "rmse": 34.36,
-      "smape": 0.94
+      "mae": 22.22,
+      "rmse": 29.76,
+      "smape": 0.86
     }
   },
   "candidate_evaluations": {
     "naive_baseline": {
       "val": {
-        "mae": 122.87,
-        "rmse": 146.6,
-        "smape": 4.52
+        "mae": 111.42,
+        "rmse": 138.62,
+        "smape": 4.19
       },
       "test": {
-        "mae": 126.99,
-        "rmse": 160.92,
-        "smape": 4.83
+        "mae": 106.37,
+        "rmse": 130.95,
+        "smape": 3.95
       }
     },
     "seasonal_naive": {
       "val": {
-        "mae": 31.84,
-        "rmse": 38.45,
-        "smape": 1.21
+        "mae": 33.41,
+        "rmse": 40.22,
+        "smape": 1.22
       },
       "test": {
-        "mae": 25.18,
-        "rmse": 30.68,
-        "smape": 0.91
+        "mae": 31.13,
+        "rmse": 39.61,
+        "smape": 1.19
       }
     },
     "ridge_regression": {
       "val": {
-        "mae": 39.6,
-        "rmse": 48.12,
-        "smape": 1.41
+        "mae": 44.72,
+        "rmse": 54.65,
+        "smape": 1.72
       },
       "test": {
-        "mae": 39.37,
-        "rmse": 47.79,
-        "smape": 1.52
+        "mae": 40.63,
+        "rmse": 50.48,
+        "smape": 1.61
       }
     },
     "random_forest": {
       "val": {
-        "mae": 23.66,
-        "rmse": 29.52,
-        "smape": 0.87
+        "mae": 34.69,
+        "rmse": 41.27,
+        "smape": 1.24
       },
       "test": {
-        "mae": 25.34,
-        "rmse": 34.36,
-        "smape": 0.94
+        "mae": 22.22,
+        "rmse": 29.76,
+        "smape": 0.86
       }
     },
     "hist_gradient_boosting": {
       "val": {
-        "mae": 27.46,
-        "rmse": 34.18,
-        "smape": 1.02
+        "mae": 37.56,
+        "rmse": 43.57,
+        "smape": 1.38
       },
       "test": {
-        "mae": 48.07,
-        "rmse": 68.28,
-        "smape": 1.86
+        "mae": 25.35,
+        "rmse": 31.24,
+        "smape": 0.99
       }
     }
   },
   "backtest_results": {
-    "mae": 28.93,
-    "rmse": 42.44,
-    "smape": 1.07,
+    "mae": 31.11,
+    "rmse": 39.83,
+    "smape": 1.18,
     "folds": 3
   },
   "feature_importance": {
-    "demand_mw_lag_1h": 0.717,
-    "hour_cos": 0.1482,
-    "hour_sin": 0.0397,
-    "demand_mw_rolling_std_6h": 0.0286,
-    "temperature_c": 0.027,
-    "demand_mw_lag_6h": 0.0163,
-    "demand_mw_lag_24h": 0.0095,
-    "demand_mw_lag_2h": 0.0028,
-    "demand_mw_lag_3h": 0.0022,
-    "demand_mw_lag_12h": 0.0021,
-    "demand_mw_rolling_mean_6h": 0.0021,
-    "demand_mw_rolling_mean_168h": 0.0015,
-    "demand_mw_lag_48h": 0.0014,
-    "demand_mw_rolling_mean_24h": 0.0004,
+    "demand_mw_lag_1h": 0.7172,
+    "hour_cos": 0.1412,
+    "hour_sin": 0.0392,
+    "temperature_c": 0.0266,
+    "demand_mw_lag_6h": 0.0256,
+    "demand_mw_rolling_std_6h": 0.0242,
+    "demand_mw_lag_24h": 0.0088,
+    "demand_mw_rolling_mean_6h": 0.006,
+    "demand_mw_lag_3h": 0.0025,
+    "demand_mw_lag_12h": 0.0024,
+    "demand_mw_lag_2h": 0.002,
+    "demand_mw_rolling_mean_168h": 0.0016,
+    "demand_mw_lag_48h": 0.0008,
+    "demand_mw_rolling_mean_24h": 0.0006,
     "demand_mw_rolling_std_24h": 0.0004,
-    "demand_mw_rolling_min_24h": 0.0004,
-    "demand_mw_rolling_max_24h": 0.0001,
-    "day_sin": 0.0001,
-    "day_cos": 0.0001,
+    "demand_mw_rolling_min_24h": 0.0002,
+    "demand_mw_rolling_max_24h": 0.0002,
+    "day_sin": 0.0002,
+    "day_cos": 0.0002,
     "demand_mw_lag_168h": 0.0,
     "month_sin": 0.0,
     "month_cos": 0.0,

@@ -5,10 +5,18 @@ Consumes Data Quality API via API Client with fallback error boundaries.
 Displays database record completeness, missing value counts, duplicate records, data gaps, and ingestion health score.
 """
 
+import sys
+from pathlib import Path
+
+_root = str(Path(__file__).resolve().parents[3])
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+
 import streamlit as st
 import pandas as pd
 
 from app.frontend.api_client import api_client
+
 from app.frontend.utils.formatting import format_percent
 
 

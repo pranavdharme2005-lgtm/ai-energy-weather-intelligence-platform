@@ -1,10 +1,11 @@
-"""
-Frontend REST API Client for Stage 13 Control Room UI.
+import sys
+from pathlib import Path
 
-Communicates with FastAPI backend (/api/v1/) over HTTP REST API.
-Re-exports unified EnergyIntelligenceAPIClient facade and api_client instance.
-"""
+_root = str(Path(__file__).resolve().parents[2])
+if _root not in sys.path:
+    sys.path.insert(0, _root)
 
 from app.frontend.api import EnergyIntelligenceAPIClient, api_client
 
 __all__ = ["EnergyIntelligenceAPIClient", "api_client"]
+

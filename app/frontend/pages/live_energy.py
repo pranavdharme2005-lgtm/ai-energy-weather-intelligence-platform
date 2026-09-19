@@ -5,12 +5,20 @@ Consumes Weather API & Rain API via API Client with fallback error boundaries.
 Displays key meteorological indicators, rain probability, model metadata, and telemetry.
 """
 
+import sys
+from pathlib import Path
+
+_root = str(Path(__file__).resolve().parents[3])
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+
 import streamlit as st
 import plotly.express as px
 import pandas as pd
 from datetime import datetime
 
 from app.frontend.api_client import api_client
+
 from app.frontend.utils.formatting import (
     format_temp,
     format_percent,

@@ -6,10 +6,18 @@ Simulates energy demand under hypothetical weather shocks with preset templates,
 training range boundary validation, and baseline vs scenario Plotly comparison.
 """
 
+import sys
+from pathlib import Path
+
+_root = str(Path(__file__).resolve().parents[3])
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+
 import streamlit as st
 import plotly.graph_objects as go
 
 from app.frontend.api_client import api_client
+
 from app.frontend.utils.formatting import format_mw, format_percent
 
 
