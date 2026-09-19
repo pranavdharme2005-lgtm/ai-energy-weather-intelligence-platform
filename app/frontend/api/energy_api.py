@@ -65,9 +65,34 @@ class EnergyAPIClient:
             db.close()
 
     def get_peak_demand(self, region: Optional[str] = None, threshold_mw: Optional[float] = None) -> Optional[Dict[str, Any]]:
-        """Queries /energy/peak-demand endpoint."""
+        """Queries /energy/peak-demand endpoint with local repository fallback."""
         reg = region or settings.DEFAULT_REGION
         params = {"region": reg}
         if threshold_mw:
             params["threshold_mw"] = threshold_mw
-        return self.client.get("/energy/peak-demand", params=params)
+        res = self.client.get("/energy/peak-demand", params=params)
+        if res:
+            return res
+
+        db = SessionLocal()
+        try:
+            recs = EnergyRepository.get_latest(db, region=reg, limit=48)
+            if recs:
+                demands = [r.demand_mw for r in recs]
+                peak_val = max(demands)
+                t_limit = threshold_mw or settings.ENERGY_SPIKE_THRESHOLD_MW
+                peak_rec = next((r for r in recs if r.demand_mw == peak_val), recs[0])
+                return {
+                    "region": reg,
+                    "peak_demand_mw": peak_val,
+                    "threshold_mw": t_limit,
+                    "threshold_exceeded": peak_val >= t_limit,
+                    "peak_timestamp": peak_rec.timestamp.isoformat() if hasattr(peak_rec.timestamp, 'isoformat') else str(peak_rec.timestamp),
+                    "sample_count": len(recs)
+                }
+        except Exception:
+            pass
+        finally:
+            db.close()
+        return None
+

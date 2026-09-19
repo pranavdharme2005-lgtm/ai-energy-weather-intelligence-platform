@@ -49,8 +49,26 @@ class AlertsAPIClient:
             db.close()
 
     def get_alert_summary(self) -> Optional[Dict[str, Any]]:
-        """Queries /alerts/summary endpoint."""
-        return self.client.get("/alerts/summary")
+        """Queries /alerts/summary endpoint with local repository fallback."""
+        res = self.client.get("/alerts/summary")
+        if res:
+            return res
+
+        db = SessionLocal()
+        try:
+            return AlertRepository.get_alert_summary(db)
+        except Exception:
+            return {
+                "total_alerts": 0,
+                "active_alerts": 0,
+                "acknowledged_alerts": 0,
+                "resolved_alerts": 0,
+                "severity_counts": {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0},
+                "by_type": {}
+            }
+        finally:
+            db.close()
+
 
     def acknowledge_alert(self, alert_id: int) -> bool:
         """Posts to /alerts/{alert_id}/acknowledge endpoint."""

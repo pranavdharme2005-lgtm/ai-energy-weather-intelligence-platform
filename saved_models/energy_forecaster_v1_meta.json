@@ -1,7 +1,7 @@
 {
   "model_name": "random_forest",
   "model_version": "v1.0.0",
-  "training_date": "2026-09-19T13:30:17.634317+00:00",
+  "training_date": "2026-09-19T14:59:17.491391+00:00",
   "data_frequency": "hourly (1h)",
   "forecast_horizon": "24h",
   "train_records": 122,
@@ -38,103 +38,103 @@
     "precipitation_mm",
     "rain_probability"
   ],
-  "margin_95": 27.1,
+  "margin_95": 42.03,
   "selected_eval": {
     "val": {
-      "mae": 33.32,
-      "rmse": 42.59,
-      "smape": 1.27
+      "mae": 44.2,
+      "rmse": 54.46,
+      "smape": 1.67
     },
     "test": {
-      "mae": 24.83,
-      "rmse": 33.72,
-      "smape": 0.96
+      "mae": 38.99,
+      "rmse": 46.23,
+      "smape": 1.49
     }
   },
   "candidate_evaluations": {
     "naive_baseline": {
       "val": {
-        "mae": 116.78,
-        "rmse": 148.79,
-        "smape": 4.53
+        "mae": 113.3,
+        "rmse": 138.6,
+        "smape": 4.16
       },
       "test": {
-        "mae": 134.63,
-        "rmse": 159.01,
-        "smape": 5.13
+        "mae": 130.58,
+        "rmse": 153.18,
+        "smape": 4.89
       }
     },
     "seasonal_naive": {
       "val": {
-        "mae": 31.71,
-        "rmse": 40.88,
-        "smape": 1.11
+        "mae": 39.76,
+        "rmse": 45.23,
+        "smape": 1.44
       },
       "test": {
-        "mae": 29.09,
-        "rmse": 38.59,
-        "smape": 1.07
+        "mae": 56.41,
+        "rmse": 64.52,
+        "smape": 2.13
       }
     },
     "ridge_regression": {
       "val": {
-        "mae": 54.38,
-        "rmse": 64.19,
-        "smape": 2.09
+        "mae": 54.26,
+        "rmse": 66.45,
+        "smape": 2.01
       },
       "test": {
-        "mae": 46.42,
-        "rmse": 60.17,
-        "smape": 1.75
+        "mae": 49.93,
+        "rmse": 63.11,
+        "smape": 1.8
       }
     },
     "random_forest": {
       "val": {
-        "mae": 33.32,
-        "rmse": 42.59,
-        "smape": 1.27
+        "mae": 44.2,
+        "rmse": 54.46,
+        "smape": 1.67
       },
       "test": {
-        "mae": 24.83,
-        "rmse": 33.72,
-        "smape": 0.96
+        "mae": 38.99,
+        "rmse": 46.23,
+        "smape": 1.49
       }
     },
     "hist_gradient_boosting": {
       "val": {
-        "mae": 61.02,
-        "rmse": 99.39,
-        "smape": 2.37
+        "mae": 46.73,
+        "rmse": 55.1,
+        "smape": 1.73
       },
       "test": {
-        "mae": 28.91,
-        "rmse": 33.94,
-        "smape": 1.06
+        "mae": 52.9,
+        "rmse": 69.77,
+        "smape": 1.94
       }
     }
   },
   "backtest_results": {
-    "mae": 28.81,
-    "rmse": 36.45,
-    "smape": 1.08,
+    "mae": 39.19,
+    "rmse": 47.63,
+    "smape": 1.49,
     "folds": 3
   },
   "feature_importance": {
-    "demand_mw_lag_1h": 0.7134,
-    "hour_cos": 0.14,
-    "demand_mw_rolling_std_6h": 0.0428,
-    "hour_sin": 0.0391,
-    "demand_mw_lag_6h": 0.0235,
-    "temperature_c": 0.0219,
-    "demand_mw_lag_24h": 0.0101,
-    "demand_mw_lag_12h": 0.0024,
-    "demand_mw_lag_3h": 0.002,
+    "demand_mw_lag_1h": 0.7149,
+    "hour_cos": 0.1433,
+    "hour_sin": 0.0402,
+    "demand_mw_rolling_std_6h": 0.0378,
+    "demand_mw_lag_6h": 0.0283,
+    "temperature_c": 0.0157,
+    "demand_mw_lag_24h": 0.0091,
+    "demand_mw_rolling_mean_6h": 0.0025,
     "demand_mw_lag_2h": 0.0018,
-    "demand_mw_rolling_mean_6h": 0.0009,
-    "demand_mw_lag_48h": 0.0005,
-    "demand_mw_rolling_mean_24h": 0.0004,
-    "demand_mw_rolling_std_24h": 0.0004,
-    "demand_mw_rolling_mean_168h": 0.0003,
+    "demand_mw_lag_3h": 0.0018,
+    "demand_mw_rolling_mean_168h": 0.0015,
+    "demand_mw_lag_12h": 0.001,
+    "demand_mw_lag_48h": 0.0006,
+    "demand_mw_rolling_mean_24h": 0.0003,
+    "demand_mw_rolling_std_24h": 0.0003,
     "demand_mw_rolling_max_24h": 0.0002,
     "demand_mw_rolling_min_24h": 0.0001,
     "day_sin": 0.0001,

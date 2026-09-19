@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     PORT: int = 8000
     STREAMLIT_PORT: int = 8501
     API_PREFIX: str = "/api/v1"
+    API_BASE_URL: str = ""
     CORS_ALLOWED_ORIGINS: str = "http://localhost:8501,http://127.0.0.1:8501"
     LOG_LEVEL: str = "INFO"
 

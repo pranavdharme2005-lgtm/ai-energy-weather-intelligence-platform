@@ -74,6 +74,32 @@ class WeatherAPIClient:
             db.close()
 
     def get_weather_summary(self, location: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        """Queries /weather/summary endpoint."""
+        """Queries /weather/summary endpoint with local repository fallback."""
         loc = location or settings.DEFAULT_LOCATION
-        return self.client.get("/weather/summary", params={"location": loc})
+        res = self.client.get("/weather/summary", params={"location": loc})
+        if res:
+            return res
+
+        db = SessionLocal()
+        try:
+            recs = WeatherRepository.get_latest(db, location=loc, limit=48)
+            if recs:
+                temps = [r.temperature_c for r in recs]
+                hums = [r.humidity_pct for r in recs]
+                precips = [r.precipitation_mm for r in recs]
+                return {
+                    "location": loc,
+                    "avg_temperature_c": round(sum(temps) / len(temps), 2),
+                    "min_temperature_c": round(min(temps), 2),
+                    "max_temperature_c": round(max(temps), 2),
+                    "avg_humidity_pct": round(sum(hums) / len(hums), 2),
+                    "total_precipitation_mm": round(sum(precips), 2),
+                    "latest_condition": recs[0].weather_condition if recs else "Clear",
+                    "sample_count": len(recs)
+                }
+        except Exception:
+            pass
+        finally:
+            db.close()
+        return None
+
