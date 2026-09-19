@@ -98,3 +98,35 @@ def init_db():
 
     except Exception as e:
         logger.error(f"Failed to initialize database tables: {e}")
+
+    # Auto-seed initial telemetry if weather or energy tables are empty
+    try:
+        from datetime import datetime, timedelta, timezone
+        from app.database.models import WeatherData, EnergyData
+        from app.data.ingestion import SyntheticDataIngestor
+        from app.data.validator import DataValidator
+        from app.database.repository import WeatherRepository, EnergyRepository
+
+        with SessionLocal() as db_session:
+            w_count = db_session.query(WeatherData).count()
+            e_count = db_session.query(EnergyData).count()
+
+            if w_count == 0 or e_count == 0:
+                logger.info("Empty database detected on boot. Seeding initial telemetry data...")
+                ingestor = SyntheticDataIngestor()
+                now = datetime.now(timezone.utc)
+                start_time = now - timedelta(hours=72)
+
+                if w_count == 0:
+                    df_w = ingestor.fetch_weather_data("London", start_time, now)
+                    recs_w, _ = DataValidator.validate_weather_batch(df_w.to_dict(orient="records"))
+                    WeatherRepository.upsert_weather_records(db_session, recs_w)
+                    logger.info("Successfully seeded weather telemetry records.")
+
+                if e_count == 0:
+                    df_e = ingestor.fetch_energy_data("Grid_Alpha", start_time, now)
+                    recs_e, _ = DataValidator.validate_energy_batch(df_e.to_dict(orient="records"))
+                    EnergyRepository.upsert_energy_records(db_session, recs_e)
+                    logger.info("Successfully seeded energy load telemetry records.")
+    except Exception as seed_err:
+        logger.warning(f"Auto-seeding initial telemetry failed: {seed_err}")

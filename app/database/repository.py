@@ -70,7 +70,20 @@ class WeatherRepository:
     @staticmethod
     def get_latest(db: Session, location: str = "London", limit: int = 24) -> List[WeatherData]:
         """Retrieves recent weather observations."""
-        return db.query(WeatherData).filter(WeatherData.location == location).order_by(WeatherData.timestamp.desc()).limit(limit).all()
+        recs = db.query(WeatherData).filter(WeatherData.location == location).order_by(WeatherData.timestamp.desc()).limit(limit).all()
+        if not recs and db is not None:
+            try:
+                from datetime import datetime, timedelta, timezone
+                from app.data.ingestion import SyntheticDataIngestor
+                from app.data.validator import DataValidator
+                now = datetime.now(timezone.utc)
+                df = SyntheticDataIngestor().fetch_weather_data(location, now - timedelta(hours=limit + 12), now)
+                valid_recs, _ = DataValidator.validate_weather_batch(df.to_dict(orient="records"))
+                WeatherRepository.upsert_weather_records(db, valid_recs)
+                recs = db.query(WeatherData).filter(WeatherData.location == location).order_by(WeatherData.timestamp.desc()).limit(limit).all()
+            except Exception as e:
+                logger.warning(f"On-demand weather seeding failed: {e}")
+        return recs
 
 
 class EnergyRepository:
@@ -125,7 +138,20 @@ class EnergyRepository:
     @staticmethod
     def get_latest(db: Session, region: str = "Grid_Alpha", limit: int = 24) -> List[EnergyData]:
         """Retrieves recent energy demand observations."""
-        return db.query(EnergyData).filter(EnergyData.region == region).order_by(EnergyData.timestamp.desc()).limit(limit).all()
+        recs = db.query(EnergyData).filter(EnergyData.region == region).order_by(EnergyData.timestamp.desc()).limit(limit).all()
+        if not recs and db is not None:
+            try:
+                from datetime import datetime, timedelta, timezone
+                from app.data.ingestion import SyntheticDataIngestor
+                from app.data.validator import DataValidator
+                now = datetime.now(timezone.utc)
+                df = SyntheticDataIngestor().fetch_energy_data(region, now - timedelta(hours=limit + 12), now)
+                valid_recs, _ = DataValidator.validate_energy_batch(df.to_dict(orient="records"))
+                EnergyRepository.upsert_energy_records(db, valid_recs)
+                recs = db.query(EnergyData).filter(EnergyData.region == region).order_by(EnergyData.timestamp.desc()).limit(limit).all()
+            except Exception as e:
+                logger.warning(f"On-demand energy seeding failed: {e}")
+        return recs
 
     @staticmethod
     def save_forecasts(db: Session, forecasts: List[Dict[str, Any]]) -> int:
