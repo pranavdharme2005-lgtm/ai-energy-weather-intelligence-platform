@@ -7,8 +7,11 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-# Add project root directory to python path for modular import resolution
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+# Add project root directory to index 0 of python path for modular import resolution
+root_dir = str(Path(__file__).resolve().parent.parent.parent)
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
+
 
 from app.config.settings import settings
 from app.frontend.api_client import api_client

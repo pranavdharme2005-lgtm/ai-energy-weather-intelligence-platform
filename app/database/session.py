@@ -8,6 +8,9 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+IS_POSTGRESQL = False
+DB_STATUS_MESSAGE = ""
+
 # Create engine with fallback connection handling for offline local environments
 try:
     engine = create_engine(
@@ -18,9 +21,17 @@ try:
     # Test connection ping
     with engine.connect() as conn:
         pass
+    IS_POSTGRESQL = True
+    DB_STATUS_MESSAGE = "PostgreSQL Connected"
     logger.info("Successfully connected to PostgreSQL database.")
 except Exception as e:
-    logger.warning(f"Could not connect to PostgreSQL URL ({settings.DATABASE_URL}). Error: {e}. Falling back to SQLite file database.")
+    IS_POSTGRESQL = False
+    DB_STATUS_MESSAGE = "SQLite Fallback Mode (Production PostgreSQL DATABASE_URL not set)"
+    logger.warning(
+        f"[DB CONFIGURATION WARNING] Could not connect to PostgreSQL URL ({settings.DATABASE_URL}). "
+        f"Error: {e}. Falling back to SQLite file database 'energy_intelligence.db'. "
+        "To use production PostgreSQL, set DATABASE_URL in Streamlit Cloud Secrets."
+    )
     engine = create_engine("sqlite:///energy_intelligence.db", connect_args={"check_same_thread": False}, echo=False)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -130,3 +141,11 @@ def init_db():
                     logger.info("Successfully seeded energy load telemetry records.")
     except Exception as seed_err:
         logger.warning(f"Auto-seeding initial telemetry failed: {seed_err}")
+
+
+# Automatically run init_db on module import to guarantee all required tables exist
+try:
+    init_db()
+except Exception as _init_err:
+    logger.warning(f"Auto-initialization of DB on import failed: {_init_err}")
+
