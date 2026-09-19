@@ -20,8 +20,9 @@ class Settings(BaseSettings):
     CORS_ALLOWED_ORIGINS: str = "http://localhost:8501,http://127.0.0.1:8501"
     LOG_LEVEL: str = "INFO"
 
-    # Database Configuration
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/energy_intelligence_db"
+    # Database Configuration (Defaults to local SQLite to prevent unreachable localhost PostgreSQL connection attempts)
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///energy_intelligence.db")
+
 
     # Weather API Configuration (Open-Meteo as high-accuracy open default)
     WEATHER_API_BASE_URL: str = "https://api.open-meteo.com/v1/forecast"

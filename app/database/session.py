@@ -8,31 +8,53 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+import os
+
 IS_POSTGRESQL = False
 DB_STATUS_MESSAGE = ""
 
-# Create engine with fallback connection handling for offline local environments
+# Resolve DATABASE_URL: Streamlit Secrets -> Environment Variable -> App Settings -> SQLite Default
+raw_db_url = ""
+try:
+    import streamlit as st
+    if hasattr(st, "secrets") and "DATABASE_URL" in st.secrets:
+        raw_db_url = str(st.secrets["DATABASE_URL"])
+except Exception:
+    pass
+
+if not raw_db_url:
+    raw_db_url = os.getenv("DATABASE_URL") or getattr(settings, "DATABASE_URL", "sqlite:///energy_intelligence.db")
+
+# Prevent connecting to localhost/127.0.0.1 PostgreSQL in cloud environment
+if ("localhost" in raw_db_url or "127.0.0.1" in raw_db_url) and "sqlite" not in raw_db_url:
+    logger.warning(
+        f"[DB CONFIGURATION NOTICE] Localhost PostgreSQL URL detected ({raw_db_url}). "
+        "Unreachable in cloud deployment. Switching to local SQLite database 'energy_intelligence.db'."
+    )
+    raw_db_url = "sqlite:///energy_intelligence.db"
+
 try:
     engine = create_engine(
-        settings.DATABASE_URL,
+        raw_db_url,
         pool_pre_ping=True,
         echo=False
     )
     # Test connection ping
     with engine.connect() as conn:
         pass
-    IS_POSTGRESQL = True
-    DB_STATUS_MESSAGE = "PostgreSQL Connected"
-    logger.info("Successfully connected to PostgreSQL database.")
+    IS_POSTGRESQL = "sqlite" not in raw_db_url
+    DB_STATUS_MESSAGE = "PostgreSQL Connected" if IS_POSTGRESQL else "SQLite Database Active"
+    logger.info(f"Successfully connected to database engine ({raw_db_url.split('@')[-1] if '@' in raw_db_url else raw_db_url}).")
 except Exception as e:
     IS_POSTGRESQL = False
-    DB_STATUS_MESSAGE = "SQLite Fallback Mode (Production PostgreSQL DATABASE_URL not set)"
+    DB_STATUS_MESSAGE = "SQLite Fallback Mode (Configured DB connection failed)"
     logger.warning(
-        f"[DB CONFIGURATION WARNING] Could not connect to PostgreSQL URL ({settings.DATABASE_URL}). "
+        f"[DB CONFIGURATION WARNING] Could not connect to database URL ({raw_db_url}). "
         f"Error: {e}. Falling back to SQLite file database 'energy_intelligence.db'. "
         "To use production PostgreSQL, set DATABASE_URL in Streamlit Cloud Secrets."
     )
     engine = create_engine("sqlite:///energy_intelligence.db", connect_args={"check_same_thread": False}, echo=False)
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
