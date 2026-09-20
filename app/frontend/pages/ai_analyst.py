@@ -23,12 +23,13 @@ def render():
     st.caption("Stage 9 AI Analyst providing grounded grid insights, operational root causes, and weather impact explanations")
 
     region = st.session_state.get("current_region", "Region-North")
+    location = st.session_state.get("current_location", "Mumbai")
 
     # Executive Daily Intelligence Briefing Section
     st.subheader("💡 Today's Intelligence Executive Briefing")
     briefing = None
     try:
-        briefing = api_client.ask_ai_analyst("Generate executive daily intelligence briefing", region=region)
+        briefing = api_client.ask_ai_analyst("Generate executive daily intelligence briefing", region=region, location=location)
     except Exception as e:
         st.caption(f"AI Analyst notice: {e}")
 
@@ -82,7 +83,7 @@ def render():
             with st.spinner("Analyzing real-time grid telemetries, weather forecasts, and anomaly records..."):
                 analyst_resp = None
                 try:
-                    analyst_resp = api_client.ask_ai_analyst(user_query.strip(), region=region)
+                    analyst_resp = api_client.ask_ai_analyst(user_query.strip(), region=region, location=location)
                 except Exception as e:
                     st.error(f"Error querying AI Analyst: {e}")
 
@@ -121,3 +122,20 @@ def render():
                 st.warning("AI Analyst response currently unavailable.")
         else:
             st.info("Please enter a question to query the AI Energy Analyst.")
+
+
+if __name__ == "__main__":
+    from app.config.settings import settings
+    from app.frontend.components.styles import inject_custom_css
+
+    st.set_page_config(
+        page_title=f"{settings.APP_NAME} — AI Analyst",
+        page_icon="🤖",
+        layout="wide"
+    )
+    inject_custom_css()
+    if "current_region" not in st.session_state:
+        st.session_state.current_region = settings.DEFAULT_REGION
+    if "current_location" not in st.session_state:
+        st.session_state.current_location = settings.DEFAULT_LOCATION
+    render()

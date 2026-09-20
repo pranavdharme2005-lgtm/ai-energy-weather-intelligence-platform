@@ -114,3 +114,20 @@ def render():
         else:
             df_all = pd.DataFrame(all_alerts)
             st.dataframe(df_all, use_container_width=True)
+
+
+if __name__ == "__main__":
+    from app.config.settings import settings
+    from app.frontend.components.styles import inject_custom_css
+
+    st.set_page_config(
+        page_title=f"{settings.APP_NAME} — Alerts",
+        page_icon="🚨",
+        layout="wide"
+    )
+    inject_custom_css()
+    if "current_region" not in st.session_state:
+        st.session_state.current_region = settings.DEFAULT_REGION
+    if "current_location" not in st.session_state:
+        st.session_state.current_location = settings.DEFAULT_LOCATION
+    render()

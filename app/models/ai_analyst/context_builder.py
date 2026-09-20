@@ -24,7 +24,7 @@ logger = get_logger(__name__)
 
 
 def build_analyst_context(
-    db: Optional[Session], region: str = "Grid_Alpha", location: str = "London"
+    db: Optional[Session], region: str = "Grid_Alpha", location: str = "Mumbai"
 ) -> AnalystContext:
     """Aggregates actual, verified project outputs across Stages 2–8 into a structured AnalystContext.
 

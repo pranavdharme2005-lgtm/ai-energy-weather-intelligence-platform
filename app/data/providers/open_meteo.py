@@ -2,7 +2,7 @@
 
 import time
 from datetime import datetime, timezone
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import httpx
 
 from app.config.settings import settings
@@ -65,35 +65,48 @@ class OpenMeteoWeatherProvider(WeatherProvider):
         logger.error(f"Open-Meteo API failed after {self.retries} attempts.")
         raise RuntimeError(f"Open-Meteo Weather API request failed: {last_exception}")
 
+    def _resolve_coords(self, location: str, latitude: Optional[float], longitude: Optional[float]) -> Tuple[float, float]:
+        from app.config.settings import CITY_COORDINATES
+        if location in CITY_COORDINATES:
+            c = CITY_COORDINATES[location]
+            return c["latitude"], c["longitude"]
+        if latitude is not None and longitude is not None:
+            return latitude, longitude
+        return settings.DEFAULT_LATITUDE, settings.DEFAULT_LONGITUDE
+
     def fetch_current_weather(
-        self, location: str = "London", latitude: float = 51.5074, longitude: float = -0.1278
+        self, location: Optional[str] = None, latitude: Optional[float] = None, longitude: Optional[float] = None
     ) -> List[Dict[str, Any]]:
         """Fetches current weather telemetry from Open-Meteo API."""
+        loc = location or settings.DEFAULT_LOCATION
+        lat, lon = self._resolve_coords(loc, latitude, longitude)
         params = {
-            "latitude": latitude,
-            "longitude": longitude,
+            "latitude": lat,
+            "longitude": lon,
             "current": "temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,cloud_cover,precipitation,weather_code",
             "timezone": "UTC"
         }
 
         raw_data = self._execute_request_with_retry(params)
-        return [self._parse_current_record(raw_data, location, latitude, longitude)]
+        return [self._parse_current_record(raw_data, loc, lat, lon)]
 
     def fetch_historical_weather(
-        self, location: str = "London", latitude: float = 51.5074, longitude: float = -0.1278,
+        self, location: Optional[str] = None, latitude: Optional[float] = None, longitude: Optional[float] = None,
         start_time: Optional[datetime] = None, end_time: Optional[datetime] = None
     ) -> List[Dict[str, Any]]:
         """Fetches hourly weather forecast/historical telemetry from Open-Meteo API."""
+        loc = location or settings.DEFAULT_LOCATION
+        lat, lon = self._resolve_coords(loc, latitude, longitude)
         params = {
-            "latitude": latitude,
-            "longitude": longitude,
+            "latitude": lat,
+            "longitude": lon,
             "hourly": "temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,cloud_cover,precipitation,weather_code",
             "timezone": "UTC",
             "forecast_days": 1
         }
 
         raw_data = self._execute_request_with_retry(params)
-        return self._parse_hourly_records(raw_data, location, latitude, longitude)
+        return self._parse_hourly_records(raw_data, loc, lat, lon)
 
     def _parse_current_record(
         self, raw: Dict[str, Any], location: str, lat: float, lon: float

@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Tuple, Optional
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from app.config.settings import settings
 from app.database.models import WeatherData, EnergyData, EnergyForecast, Anomaly, Alert, WeatherImpactRecord, ScenarioRun, AIInsight
 from app.utils.logger import get_logger
 
@@ -30,7 +31,7 @@ class WeatherRepository:
                 ts = datetime.fromisoformat(rec["timestamp"].replace("Z", "+00:00"))
 
             existing = db.query(WeatherData).filter(
-                WeatherData.location == rec.get("location", "London"),
+                WeatherData.location == rec.get("location", settings.DEFAULT_LOCATION),
                 WeatherData.timestamp == ts,
                 WeatherData.source == rec.get("source", "Open-Meteo-API")
             ).first()
@@ -42,7 +43,7 @@ class WeatherRepository:
             try:
                 weather_obj = WeatherData(
                     timestamp=ts,
-                    location=rec.get("location", "London"),
+                    location=rec.get("location", settings.DEFAULT_LOCATION),
                     latitude=rec.get("latitude"),
                     longitude=rec.get("longitude"),
                     temperature_c=float(rec["temperature_c"]),
@@ -68,21 +69,31 @@ class WeatherRepository:
         return inserted_count, duplicate_count
 
     @staticmethod
-    def get_latest(db: Session, location: str = "London", limit: int = 24) -> List[WeatherData]:
-        """Retrieves recent weather observations."""
-        recs = db.query(WeatherData).filter(WeatherData.location == location).order_by(WeatherData.timestamp.desc()).limit(limit).all()
+    def get_latest(db: Session, location: str = "Mumbai", limit: int = 24) -> List[WeatherData]:
+        """Retrieves recent weather observations for specified location."""
+        loc = location or settings.DEFAULT_LOCATION
+        recs = db.query(WeatherData).filter(WeatherData.location == loc).order_by(WeatherData.timestamp.desc()).limit(limit).all()
         if not recs and db is not None:
             try:
                 from datetime import datetime, timedelta, timezone
-                from app.data.ingestion import SyntheticDataIngestor
+                from app.data.providers.open_meteo import OpenMeteoWeatherProvider
                 from app.data.validator import DataValidator
-                now = datetime.now(timezone.utc)
-                df = SyntheticDataIngestor().fetch_weather_data(location, now - timedelta(hours=limit + 12), now)
-                valid_recs, _ = DataValidator.validate_weather_batch(df.to_dict(orient="records"))
+                
+                fetched_recs = []
+                try:
+                    provider = OpenMeteoWeatherProvider()
+                    fetched_recs = provider.fetch_historical_weather(location=loc)
+                except Exception:
+                    from app.data.ingestion import SyntheticDataIngestor
+                    now = datetime.now(timezone.utc)
+                    df = SyntheticDataIngestor().fetch_weather_data(loc, now - timedelta(hours=limit + 12), now)
+                    fetched_recs = df.to_dict(orient="records")
+
+                valid_recs, _ = DataValidator.validate_weather_batch(fetched_recs)
                 WeatherRepository.upsert_weather_records(db, valid_recs)
-                recs = db.query(WeatherData).filter(WeatherData.location == location).order_by(WeatherData.timestamp.desc()).limit(limit).all()
+                recs = db.query(WeatherData).filter(WeatherData.location == loc).order_by(WeatherData.timestamp.desc()).limit(limit).all()
             except Exception as e:
-                logger.warning(f"On-demand weather seeding failed: {e}")
+                logger.warning(f"On-demand weather seeding failed for {loc}: {e}")
         return recs
 
 

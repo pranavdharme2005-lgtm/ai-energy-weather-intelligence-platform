@@ -4,6 +4,21 @@ import os
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+CITY_COORDINATES = {
+    "Mumbai": {"latitude": 19.0760, "longitude": 72.8777, "country": "India"},
+    "Pune": {"latitude": 18.5204, "longitude": 73.8567, "country": "India"},
+    "Nagpur": {"latitude": 21.1458, "longitude": 79.0882, "country": "India"},
+    "Delhi": {"latitude": 28.6139, "longitude": 77.2090, "country": "India"},
+    "Bengaluru": {"latitude": 12.9716, "longitude": 77.5946, "country": "India"},
+    "Hyderabad": {"latitude": 17.3850, "longitude": 78.4867, "country": "India"},
+    "Chennai": {"latitude": 13.0827, "longitude": 80.2707, "country": "India"},
+    "London": {"latitude": 51.5074, "longitude": -0.1278, "country": "UK"},
+    "New York": {"latitude": 40.7128, "longitude": -74.0060, "country": "USA"},
+    "Tokyo": {"latitude": 35.6762, "longitude": 139.6503, "country": "Japan"}
+}
+
+SUPPORTED_LOCATIONS = list(CITY_COORDINATES.keys())
+
 
 class Settings(BaseSettings):
     """Centralized configuration reading environment variables with sensible defaults."""
@@ -23,7 +38,6 @@ class Settings(BaseSettings):
     # Database Configuration (Defaults to local SQLite to prevent unreachable localhost PostgreSQL connection attempts)
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///energy_intelligence.db")
 
-
     # Weather API Configuration (Open-Meteo as high-accuracy open default)
     WEATHER_API_BASE_URL: str = "https://api.open-meteo.com/v1/forecast"
     WEATHER_API_KEY: Optional[str] = None
@@ -32,10 +46,10 @@ class Settings(BaseSettings):
     ENERGY_API_BASE_URL: str = "https://api.eia.gov/v2/"
     ENERGY_API_KEY: Optional[str] = None
 
-    # Default Region & Meteorological Coordinates
-    DEFAULT_LOCATION: str = "London"
-    DEFAULT_LATITUDE: float = 51.5074
-    DEFAULT_LONGITUDE: float = -0.1278
+    # Default Region & Meteorological Coordinates (Mumbai as primary neutral default)
+    DEFAULT_LOCATION: str = "Mumbai"
+    DEFAULT_LATITUDE: float = 19.0760
+    DEFAULT_LONGITUDE: float = 72.8777
     DEFAULT_REGION: str = "Grid_Alpha"
 
     # Data Ingestion Resilience & Retry Parameters

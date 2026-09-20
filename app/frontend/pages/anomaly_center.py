@@ -135,3 +135,20 @@ def render():
         )
     else:
         st.info("No anomalies match the selected filters.")
+
+
+if __name__ == "__main__":
+    from app.config.settings import settings
+    from app.frontend.components.styles import inject_custom_css
+
+    st.set_page_config(
+        page_title=f"{settings.APP_NAME} — Anomalies",
+        page_icon="⚠️",
+        layout="wide"
+    )
+    inject_custom_css()
+    if "current_region" not in st.session_state:
+        st.session_state.current_region = settings.DEFAULT_REGION
+    if "current_location" not in st.session_state:
+        st.session_state.current_location = settings.DEFAULT_LOCATION
+    render()

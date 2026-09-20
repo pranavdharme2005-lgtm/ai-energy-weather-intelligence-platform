@@ -136,3 +136,20 @@ def render():
             yaxis_title="Load (MW)"
         )
         st.plotly_chart(fig_bar, use_container_width=True)
+
+
+if __name__ == "__main__":
+    from app.config.settings import settings
+    from app.frontend.components.styles import inject_custom_css
+
+    st.set_page_config(
+        page_title=f"{settings.APP_NAME} — Simulator",
+        page_icon="🎛️",
+        layout="wide"
+    )
+    inject_custom_css()
+    if "current_region" not in st.session_state:
+        st.session_state.current_region = settings.DEFAULT_REGION
+    if "current_location" not in st.session_state:
+        st.session_state.current_location = settings.DEFAULT_LOCATION
+    render()

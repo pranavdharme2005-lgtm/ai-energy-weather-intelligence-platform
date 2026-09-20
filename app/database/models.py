@@ -19,7 +19,7 @@ class WeatherData(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     timestamp = Column(DateTime(timezone=True), nullable=False, index=True)
-    location = Column(String(100), nullable=False, default="London")
+    location = Column(String(100), nullable=False, default="Mumbai")
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     temperature_c = Column(Float, nullable=False)

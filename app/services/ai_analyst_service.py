@@ -29,13 +29,15 @@ class AIEnergyAnalystService:
     def generate_daily_report(
         self,
         region: str = "Grid_Alpha",
+        location: Optional[str] = None,
         force_refresh: bool = False,
         save_to_db: bool = True
     ) -> DailyIntelligenceReport:
-        """Generates grounded Daily Intelligence Report for given region.
+        """Generates grounded Daily Intelligence Report for given region and location.
 
         Args:
             region (str): Grid region identifier.
+            location (str): Location city name.
             force_refresh (bool): Bypass caching if True.
             save_to_db (bool): Persist generated report to database if True.
 
@@ -49,7 +51,8 @@ class AIEnergyAnalystService:
             close_session = True
 
         try:
-            context: AnalystContext = build_analyst_context(db_context, region=region)
+            loc = location or "Mumbai"
+            context: AnalystContext = build_analyst_context(db_context, region=region, location=loc)
             report: DailyIntelligenceReport = generate_daily_intelligence(context, force_refresh=force_refresh)
 
             if save_to_db and db_context is not None:
@@ -74,6 +77,7 @@ class AIEnergyAnalystService:
         self,
         question: str,
         region: str = "Grid_Alpha",
+        location: Optional[str] = None,
         force_refresh: bool = False,
         save_to_db: bool = True
     ) -> AnalystResponseSchema:
@@ -82,6 +86,7 @@ class AIEnergyAnalystService:
         Args:
             question (str): User query string.
             region (str): Grid region identifier.
+            location (str): Location city name.
             force_refresh (bool): Bypass caching if True.
             save_to_db (bool): Persist Q&A exchange to database if True.
 
@@ -95,7 +100,8 @@ class AIEnergyAnalystService:
             close_session = True
 
         try:
-            context: AnalystContext = build_analyst_context(db_context, region=region)
+            loc = location or "Mumbai"
+            context: AnalystContext = build_analyst_context(db_context, region=region, location=loc)
             response: AnalystResponseSchema = ask_energy_analyst(question, context, force_refresh=force_refresh)
 
             if save_to_db and db_context is not None:

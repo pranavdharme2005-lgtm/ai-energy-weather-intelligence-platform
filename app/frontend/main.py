@@ -83,15 +83,27 @@ st.sidebar.markdown(
 )
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
 
-# Global Region Selector
+from app.config.settings import settings, SUPPORTED_LOCATIONS
+
+# Global Location & Region Selectors
+curr_loc = st.session_state.get("current_location", settings.DEFAULT_LOCATION)
+loc_index = SUPPORTED_LOCATIONS.index(curr_loc) if curr_loc in SUPPORTED_LOCATIONS else 0
+
+selected_location = st.sidebar.selectbox(
+    "📍 Monitored Location / City",
+    SUPPORTED_LOCATIONS,
+    index=loc_index
+)
+st.session_state.current_location = selected_location
+
 selected_region = st.sidebar.selectbox(
-    "Monitored Region",
+    "⚡ Monitored Region",
     ["Region-North", "Region-South", "Region-East", "Region-West"],
     index=0
 )
 st.session_state.current_region = selected_region
 
-# Navigation Menu across 10 core sections
+# Navigation Menu across 11 core sections
 page_choice = st.sidebar.radio(
     "Application Navigation",
     [
@@ -103,8 +115,9 @@ page_choice = st.sidebar.radio(
         "6. Alerts",
         "7. What-If Simulator",
         "8. AI Energy Analyst",
-        "9. Data Quality",
-        "10. About / System Info"
+        "9. Weather Impact Analytics",
+        "10. Data Quality",
+        "11. About / System Info"
     ],
     index=0
 )
@@ -147,9 +160,24 @@ st.markdown(
             </div>
         </div>
     </div>
-    """,
-    unsafe_allow_html=True
-)
+# Prominent Top Control Bar for Location Selection
+col_hdr_left, col_hdr_right = st.columns([3, 1])
+with col_hdr_left:
+    st.markdown(f"### 📍 Active Monitored Location: **{st.session_state.current_location}**")
+with col_hdr_right:
+    curr_l = st.session_state.get("current_location", settings.DEFAULT_LOCATION)
+    idx_l = SUPPORTED_LOCATIONS.index(curr_l) if curr_l in SUPPORTED_LOCATIONS else 0
+    top_city = st.selectbox(
+        "📍 Change City / Location",
+        SUPPORTED_LOCATIONS,
+        index=idx_l,
+        key="top_location_selectbox"
+    )
+    if top_city != st.session_state.current_location:
+        st.session_state.current_location = top_city
+        st.rerun()
+
+st.markdown("---")
 
 # Page Routing Engine
 if page_choice == "1. Control Room":
@@ -168,9 +196,11 @@ elif page_choice == "7. What-If Simulator":
     simulator.render()
 elif page_choice == "8. AI Energy Analyst":
     ai_analyst.render()
-elif page_choice == "9. Data Quality":
+elif page_choice == "9. Weather Impact Analytics":
+    weather_impact.render()
+elif page_choice == "10. Data Quality":
     data_quality.render()
-elif page_choice == "10. About / System Info":
+elif page_choice == "11. About / System Info":
     settings_page.render()
 
 # Sidebar Footer

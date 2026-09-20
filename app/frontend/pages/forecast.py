@@ -143,3 +143,20 @@ def render():
     if not df_fc.empty:
         with st.expander("📋 Detailed 24-Hour Multi-Step Forecast Table"):
             st.dataframe(df_fc, use_container_width=True)
+
+
+if __name__ == "__main__":
+    from app.config.settings import settings
+    from app.frontend.components.styles import inject_custom_css
+
+    st.set_page_config(
+        page_title=f"{settings.APP_NAME} — Energy Forecast",
+        page_icon="🔮",
+        layout="wide"
+    )
+    inject_custom_css()
+    if "current_region" not in st.session_state:
+        st.session_state.current_region = settings.DEFAULT_REGION
+    if "current_location" not in st.session_state:
+        st.session_state.current_location = settings.DEFAULT_LOCATION
+    render()

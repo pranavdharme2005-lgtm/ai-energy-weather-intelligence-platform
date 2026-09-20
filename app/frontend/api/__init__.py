@@ -94,8 +94,8 @@ class EnergyIntelligenceAPIClient:
     def run_simulation(self, request_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         return self.simulator.run_simulation(request_data)
 
-    def ask_ai_analyst(self, question: str, region: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        return self.ai.ask_ai_analyst(question=question, region=region)
+    def ask_ai_analyst(self, question: str, region: Optional[str] = None, location: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        return self.ai.ask_ai_analyst(question=question, region=region, location=location)
 
     def get_correlations(self, region: Optional[str] = None) -> Optional[Dict[str, Any]]:
         return self.analytics.get_correlations(region=region)

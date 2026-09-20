@@ -100,9 +100,9 @@ def get_weather_history(
             humidity_pct=float(row["humidity_pct"]),
             pressure_hpa=float(row["pressure_hpa"]),
             wind_speed_ms=float(row["wind_speed_ms"]),
-            cloud_cover_pct=float(row["cloud_cover_pct"]),
-            precipitation_mm=float(row["precipitation_mm"]),
-            weather_condition=str(row["weather_condition"]),
+            cloud_cover_pct=float(row.get("cloud_cover_pct", 0.0)),
+            precipitation_mm=float(row.get("precipitation_mm", 0.0)),
+            weather_condition=str(row.get("weather_condition", "Clear")),
             latitude=row.get("latitude"),
             longitude=row.get("longitude"),
             source="Open-Meteo-API"

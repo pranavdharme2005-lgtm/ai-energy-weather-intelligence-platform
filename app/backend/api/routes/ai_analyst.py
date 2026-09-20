@@ -20,7 +20,7 @@ def analyze_grid_query(
     service = AIEnergyAnalystService(db)
     
     try:
-        resp = service.ask_question(question=request.question, region=request.region or settings.DEFAULT_REGION)
+        resp = service.ask_question(question=request.question, region=request.region or settings.DEFAULT_REGION, location=request.location or settings.DEFAULT_LOCATION)
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI Analyst processing error: {str(e)}")
 
