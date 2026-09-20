@@ -160,6 +160,10 @@ st.markdown(
             </div>
         </div>
     </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Prominent Top Control Bar for Location Selection
 col_hdr_left, col_hdr_right = st.columns([3, 1])
 with col_hdr_left:
